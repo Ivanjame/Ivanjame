@@ -16,7 +16,6 @@ def stk_push(phone_number, amount, account_reference, transaction_desc, callback
         'PartyA': 0793745809,
         'PartyB': 'YOUR_BUSINESS_SHORT_CODE',
         'PhoneNumber': 0793745809,
-        'CallBackURL': callback_url,
         'AccountReference': account_reference,
         'TransactionDesc': transaction_desc
     }
