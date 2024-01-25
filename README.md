@@ -1,48 +1,38 @@
-import requests
-import json
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-def stk_push(phone_number, amount, account_reference, transaction_desc, callback_url, access_token, api_url):
-    headers = {
-        'Authorization': f'Bearer {access_token}',
-        'Content-Type': 'application/json',
+Future<void> sendSTKPushRequest(String accessToken, int amount, String phoneNumber) async {
+  var url = Uri.parse('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest');
+  var headers = {
+    'Authorization': 'Bearer $accessToken',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+  var body = jsonEncode({
+    "BusinessShortCode": 174379,
+    "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjEwOTAxMTEwNTI4",
+    "Timestamp": "20240125110528",
+    "TransactionType": "CustomerPayBillOnline",
+    "Amount": 1000,
+    "PartyA": 0793745809,
+    "PartyB": 174379,
+    "PhoneNumber": 0793745809,
+    "CallBackURL": "https://mydomain.com/path",
+    "AccountReference": "CHATMATE",
+    "TransactionDesc": "Payment of X"
+  });
+
+  try {
+    var response = await http.post(url, headers: headers, body: body);
+    if (response.statusCode == 200) {
+      // Handle the response here
+      print('Transaction successful');
+    } else {
+      // Handle the error
+      print('Error: ${response.statusCode}');
     }
-
-    payload = {
-        'BusinessShortCode': 'YOUR_BUSINESS_SHORT_CODE',
-        'Password': 'GENERATED_PASSWORD',
-        'Timestamp': 'CURRENT_TIMESTAMP',
-        'TransactionType': 'CustomerPayBillOnline',
-        'Amount': 1000,
-        'PartyA': 0793745809,
-        'PartyB': 'YOUR_BUSINESS_SHORT_CODE',
-        'PhoneNumber': 0793745809,
-        'AccountReference': account_reference,
-        'TransactionDesc': transaction_desc
-    }
-
-    response = requests.post(api_url, headers=headers, data=json.dumps(payload))
-    return response.json()
-
-# Example usage
-phone_number = '2547XXXXXXXX'  # Replace with the customer's phone number
-amount = 10  # Replace with the transaction amount
-account_reference = '123456'  # Replace with your account reference
-transaction_desc = 'Payment description'  # Replace with the transaction description
-callback_url = 'https://yourcallbackurl.com/callback'  # Replace with your callback URL
-access_token = 'YOUR_ACCESS_TOKEN'  # Replace with your access token
-api_url = 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest'  # Replace with the STK Push API URL
-
-response = stk_push(phone_number, amount, account_reference, transaction_desc, callback_url, access_token, api_url)
-print(response)
-- 👋 Hi, I’m @Ivanjame
-- 👀 I’m interested in ...
-- 🌱 I’m currently learning ...
-- 💞️ I’m looking to collaborate on ...
-- 📫 How to reach me ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
-
-<!---
-Ivanjame/Ivanjame is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+  } catch (e) {
+    // Handle any errors that occur during the HTTP request
+    print('Error: $e');
+  }
+}
